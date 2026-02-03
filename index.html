@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 行业每日新闻速览</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div>
+        <p class="eyebrow">每日自动聚合 · 行业媒体/博客优先</p>
+        <h1>AI 行业每日新闻速览</h1>
+        <p class="subtitle">
+          一键获取最新 AI 新闻，包含来源、标题、时间与 200 字摘要，方便每日快速浏览与回顾。
+        </p>
+      </div>
+      <div class="actions">
+        <button id="refresh-button">立即刷新</button>
+        <button id="save-button" class="ghost">保存今日快照</button>
+        <span id="last-updated" class="muted">等待加载…</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="panel-header">
+          <h2>重点关注来源</h2>
+          <p class="muted">科技媒体、研究机构与 AI 公司博客</p>
+        </div>
+        <ul id="source-list" class="source-list"></ul>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>历史回顾</h2>
+          <p class="muted">自动保存快照，避免错过每日更新</p>
+        </div>
+        <div class="history-controls">
+          <label class="toggle">
+            <input id="toggle-history" type="checkbox" checked />
+            <span>显示历史快照</span>
+          </label>
+          <select id="history-select"></select>
+        </div>
+        <div id="history-empty" class="status">暂无历史快照，点击“保存今日快照”。</div>
+        <div id="history-list" class="news-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>今日最新新闻</h2>
+          <p class="muted">按发布时间排序，默认显示最近 24 小时</p>
+        </div>
+        <div id="status" class="status">正在拉取新闻，请稍候…</div>
+        <div id="news-list" class="news-list"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        数据来自公开 RSS/Atom 源，仅用于个人每日阅读；如需更完整的来源可在代码中追加 RSS。
+      </p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
