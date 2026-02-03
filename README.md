@@ -39,6 +39,12 @@ python -m http.server 8000
 3. Build command 留空，Output directory 选择 `.`（根目录）。
 4. 部署完成后获得访问链接。
 
+## 每日定时更新（洛杉矶时间 08:00）
+
+- 仓库内已提供 GitHub Actions（`.github/workflows/update-news.yml`）定时任务。
+- 默认使用 `UTC 15:00` 触发（对应洛杉矶时间 08:00，遇到夏令时可按需调整）。
+- 也可在 GitHub Actions 页面手动点击 `Run workflow` 立即执行。
+
 ## 说明
 
 - 新闻数据来自公开 RSS/Atom 源，由浏览器通过代理拉取。

@@ -53,6 +53,7 @@ const toggleHistory = document.getElementById("toggle-history");
 const MAX_SUMMARY_LENGTH = 200;
 const STORAGE_KEY = "ai-news-snapshots";
 const MAX_SNAPSHOTS = 14;
+const DATA_URL = "data/news.json";
 
 const formatDate = (date) => {
   if (!date) return "未知时间";
@@ -126,14 +127,19 @@ const saveSnapshots = (snapshots) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshots));
 };
 
+const mergeSnapshots = (snapshots, incoming) => {
+  const merged = { ...snapshots, ...incoming };
+  const sortedKeys = Object.keys(merged).sort((a, b) => b.localeCompare(a));
+  sortedKeys.slice(MAX_SNAPSHOTS).forEach((key) => {
+    delete merged[key];
+  });
+  return merged;
+};
+
 const storeSnapshot = (dateKey, items) => {
   const snapshots = loadSnapshots();
-  snapshots[dateKey] = items;
-  const sortedKeys = Object.keys(snapshots).sort((a, b) => b.localeCompare(a));
-  sortedKeys.slice(MAX_SNAPSHOTS).forEach((key) => {
-    delete snapshots[key];
-  });
-  saveSnapshots(snapshots);
+  const merged = mergeSnapshots(snapshots, { [dateKey]: items });
+  saveSnapshots(merged);
   renderHistory();
 };
 
@@ -230,6 +236,37 @@ const renderHistory = () => {
   });
 };
 
+const seedSnapshotsFromFile = async () => {
+  if (localStorage.getItem(STORAGE_KEY)) return;
+  try {
+    const response = await fetch(DATA_URL);
+    if (!response.ok) return;
+    const data = await response.json();
+    if (!data?.snapshots) return;
+    const merged = mergeSnapshots({}, data.snapshots);
+    saveSnapshots(merged);
+    renderHistory();
+  } catch (error) {
+    // ignore seed failure
+  }
+};
+
+const loadSeedNews = async () => {
+  try {
+    const response = await fetch(DATA_URL);
+    if (!response.ok) return;
+    const data = await response.json();
+    if (!Array.isArray(data?.items)) return;
+    const mapped = data.items.map((item) => ({
+      ...item,
+      date: item.date ? new Date(item.date) : null,
+    }));
+    renderNews(mapped);
+  } catch (error) {
+    // ignore seed failure
+  }
+};
+
 const fetchFeed = async ({ name, url }) => {
   const response = await fetch(`${CORS_PROXY_PREFIX}${url}`);
   if (!response.ok) {
@@ -288,6 +325,8 @@ const loadNews = async () => {
 
 renderSources();
 renderHistory();
+seedSnapshotsFromFile();
+loadSeedNews();
 loadNews();
 
 refreshButton.addEventListener("click", () => {
